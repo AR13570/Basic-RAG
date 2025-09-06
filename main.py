@@ -2,7 +2,6 @@ from langchain_ollama.chat_models import ChatOllama
 from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain_core.tools.retriever import create_retriever_tool
 from langchain_core.messages import SystemMessage
-
 from agent.agent import CustomAgent
 from agent.schema import AgentSchema
 from knowledge_base.kb import KBase
@@ -14,7 +13,7 @@ system_message = SystemMessage(
 Guidelines:
 - If context is provided (from a tool), always use it to answer the question.
 - If no context is available, decide if you need to call a tool.
-- If you don’t know based on the context, say "I don’t know based on the syllabus."
+- If you don't know based on the context, say "I don't know based on the syllabus."
 """
 )
 
@@ -46,14 +45,16 @@ agent_schema = AgentSchema(
 
 agent = CustomAgent(agent_schema)
 
+while True:
+    question = input("\nEnter your question (or 'exit' to quit): ")
+    if question.lower() == 'exit':
+        break
 
-response = agent.invoke(
-    {
-        "question": "What is the syllabus for math?",
-    }
-)
+    response = agent.invoke(
+        {
+            "question": question,
+        }
+    )
 
-print("\n[Final Response]")
-print(response.content if hasattr(response, "content") else response)
-for message in agent.messages:
-    print(f"\n[{message.type}]", message.content[:50])
+    print("\n[Final Response]")
+    print(response.content if hasattr(response, "content") else response)
